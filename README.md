@@ -1,4 +1,4 @@
-# Navy Rank Master
+# CAF Rank Master
 
 A quiz application to test your knowledge of Royal Canadian Navy ranks.
 
