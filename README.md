@@ -1,6 +1,19 @@
-# CAF Rank Master
+# Canadian Armed Forces Rank Master
 
-A quiz application to test your knowledge of CAF ranks.
+A quiz application to test your knowledge of Canadian Armed Forces ranks across all three services: Royal Canadian Navy, Canadian Army, and Royal Canadian Air Force.
+
+## Features
+
+- Multiple service branches to test from:
+  - Royal Canadian Navy
+  - Canadian Army
+  - Royal Canadian Air Force
+- Interactive quiz with visual rank insignias
+- Score tracking with persistence
+- High score system
+- Best time tracking
+- Multiple choice questions
+- Immediate feedback with interesting facts about each rank
 
 ## Prerequisites
 
@@ -8,9 +21,9 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your computer (ve
 
 ## Installation
 
-1. Open a terminal or command prompt
+1. Clone the repository
 2. Navigate to the project directory
-3. Run the following command to install dependencies:
+3. Install dependencies:
 
 ```bash
 npm install
@@ -18,30 +31,21 @@ npm install
 
 ## Running the Application
 
-After installation, start the development server:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-The application will start and you can access it by opening your web browser and navigating to:
+The application will be available at:
 
 ```
 http://localhost:5173
 ```
 
-## Features
-
-- Interactive quiz on Royal Canadian Navy ranks
-- Visual rank insignias
-- Score tracking
-- High score persistence
-- Multiple choice questions
-- Immediate feedback on answers
-
 ## Building for Production
 
-To create a production build:
+Create a production build:
 
 ```bash
 npm run build
@@ -55,3 +59,4 @@ The built files will be in the `dist` directory.
 - TypeScript
 - Vite
 - Tailwind CSS
+- Lucide Icons
