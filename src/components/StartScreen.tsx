@@ -1,4 +1,4 @@
-import { Play, Trophy, Clock, Anchor, Sword, Plane } from 'lucide-react';
+import { Play, Trophy, Clock } from 'lucide-react';
 import { QuizType, QuizStats } from '../types';
 
 interface StartScreenProps {
@@ -19,7 +19,11 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
         {/* Navy Quiz Card */}
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <Anchor size={48} className="text-blue-600" />
+            <img 
+              src="/services/navy-emblem.svg" 
+              alt="Royal Canadian Navy Emblem"
+              className="w-32 h-32 object-contain"
+            />
           </div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             Royal Canadian Navy Ranks
@@ -60,7 +64,11 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
         {/* Army Quiz Card */}
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <Sword size={48} className="text-green-600" />
+            <img 
+              src="/services/army-emblem.svg" 
+              alt="Canadian Army Emblem"
+              className="w-32 h-32 object-contain"
+            />
           </div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             Canadian Army Ranks
@@ -101,7 +109,11 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
         {/* Air Force Quiz Card */}
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <Plane size={48} className="text-sky-600" />
+            <img 
+              src="/services/air-emblem.svg" 
+              alt="Royal Canadian Air Force Emblem"
+              className="w-32 h-32 object-contain"
+            />
           </div>
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             Royal Canadian Air Force Ranks

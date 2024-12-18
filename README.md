@@ -1,6 +1,6 @@
 # CAF Rank Master
 
-A quiz application to test your knowledge of Canadian Armed Forces ranks.
+A quiz application to test your knowledge of CAF ranks.
 
 ## Prerequisites
 
@@ -32,7 +32,7 @@ http://localhost:5173
 
 ## Features
 
-- Interactive quiz on CAF ranks
+- Interactive quiz on Royal Canadian Navy ranks
 - Visual rank insignias
 - Score tracking
 - High score persistence
