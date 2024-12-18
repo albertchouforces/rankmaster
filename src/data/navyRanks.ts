@@ -47,7 +47,7 @@ export const navyRanks: NavyRank[] = [
     id: 6,
     rank: "Petty Officer First Class",
     description: "Senior supervisor with significant technical expertise",
-    fact: "PO1s are often referred to as 'Chief' despite not being Chief Petty Officers, a tradition dating back many years.",
+    fact: "There are situations when there are more than one first class petty officers in a division, due to the demands for highly experienced or skilled Sailors in technical areas.",
     imageUrl: "/ranks/po1.png"
   },
   {
