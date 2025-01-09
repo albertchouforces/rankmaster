@@ -124,15 +124,8 @@ export function FlashCard({
 
         {/* Result Section */}
         {showResult && (
-          <div className="w-full p-6">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6 max-w-xl mx-auto">
-              <div className="flex items-center gap-2 text-blue-800 mb-2">
-                <BookOpen size={20} />
-                <span className="font-semibold">Did you know?</span>
-              </div>
-              <p className="text-blue-900">{rank.fact}</p>
-            </div>
-
+          <div className="w-full p-6 flex flex-col gap-6">
+            {/* Next button moved above fact section */}
             <div className="flex justify-center w-full">
               <button
                 onClick={handleNext}
@@ -140,6 +133,14 @@ export function FlashCard({
               >
                 {questionNumber === totalQuestions ? 'Finish Quiz' : 'Next Rank'}
               </button>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 max-w-xl mx-auto">
+              <div className="flex items-center gap-2 text-blue-800 mb-2">
+                <BookOpen size={20} />
+                <span className="font-semibold">Did you know?</span>
+              </div>
+              <p className="text-blue-900">{rank.fact}</p>
             </div>
           </div>
         )}

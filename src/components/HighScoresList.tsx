@@ -1,4 +1,5 @@
-import { Medal, Trash2 } from 'lucide-react';
+import { Medal } from './Medal';
+import { Trash2, Medal as MedalIcon } from 'lucide-react';
 import { HighScoreEntry } from '../types';
 
 interface HighScoresListProps {
@@ -15,11 +16,24 @@ export function HighScoresList({ scores, accentColor, onReset }: HighScoresListP
     return `${minutes}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
   };
 
+  const getPositionDisplay = (index: number) => {
+    switch (index) {
+      case 0:
+        return <Medal position={1} color="gold" />;
+      case 1:
+        return <Medal position={2} color="silver" />;
+      case 2:
+        return <Medal position={3} color="bronze" />;
+      default:
+        return <span className="w-7 h-7 flex items-center justify-center">{index + 1}</span>;
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-          <Medal size={20} className={`text-${accentColor}-600`} />
+          <MedalIcon size={20} className={`text-${accentColor}-600`} />
           Top Scores
         </h4>
         <button
@@ -45,7 +59,9 @@ export function HighScoresList({ scores, accentColor, onReset }: HighScoresListP
             <tbody>
               {scores.map((score, index) => (
                 <tr key={index} className="border-t border-gray-100">
-                  <td className="px-3 py-2 text-sm text-gray-600 whitespace-nowrap">{index + 1}</td>
+                  <td className="px-3 py-2 text-sm text-gray-600 whitespace-nowrap">
+                    {getPositionDisplay(index)}
+                  </td>
                   <td className="px-3 py-2 text-sm font-medium text-gray-800">{score.userName}</td>
                   <td className="px-3 py-2 text-sm text-gray-600 whitespace-nowrap">
                     {score.score} ({score.accuracy}%)
