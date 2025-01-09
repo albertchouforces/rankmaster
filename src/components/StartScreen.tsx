@@ -1,14 +1,16 @@
 import { Play, Trophy, Clock } from 'lucide-react';
 import { QuizType, QuizStats } from '../types';
+import { HighScoresList } from './HighScoresList';
 
 interface StartScreenProps {
   onStart: (type: QuizType) => void;
   navyStats: QuizStats;
   armyStats: QuizStats;
   airStats: QuizStats;
+  onResetScores: (type: QuizType) => void;
 }
 
-export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartScreenProps) {
+export function StartScreen({ onStart, navyStats, armyStats, airStats, onResetScores }: StartScreenProps) {
   return (
     <div className="max-w-6xl w-full">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
@@ -17,7 +19,7 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Navy Quiz Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+        <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="flex items-center justify-center mb-4">
             <img 
               src="/services/navy-emblem.svg" 
@@ -25,44 +27,32 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
               className="w-32 h-32 object-contain"
             />
           </div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
             Royal Canadian Navy Ranks
           </h3>
-          <div className="mb-6 text-gray-600">
-            <p className="mb-4">
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4 text-center">
               Test your knowledge of Royal Canadian Navy ranks and insignias.
             </p>
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex items-center gap-2 text-blue-600">
-                <Trophy size={20} />
-                <span className="font-semibold">
-                  High Score: {navyStats.highScore}
-                  {navyStats.bestRun && ` (${navyStats.bestRun.accuracy}%)`}
-                </span>
-              </div>
-              {navyStats.bestRun && (
-                <div className="flex items-center gap-2 text-blue-600">
-                  <Clock size={20} />
-                  <span className="font-semibold">
-                    Best Time: {Math.floor(navyStats.bestRun.time / 60000)}:
-                    {Math.floor((navyStats.bestRun.time % 60000) / 1000).toString().padStart(2, '0')}.
-                    {Math.floor((navyStats.bestRun.time % 1000) / 10).toString().padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-            </div>
+            <HighScoresList 
+              scores={navyStats.highScores.slice(0, 5)} 
+              accentColor="blue"
+              onReset={() => onResetScores('navy')}
+            />
           </div>
-          <button
-            onClick={() => onStart('navy')}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-          >
-            <Play size={20} />
-            Start Navy Quiz
-          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={() => onStart('navy')}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            >
+              <Play size={20} />
+              Start Navy Quiz
+            </button>
+          </div>
         </div>
 
         {/* Army Quiz Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+        <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="flex items-center justify-center mb-4">
             <img 
               src="/services/army-emblem.svg" 
@@ -70,44 +60,32 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
               className="w-32 h-32 object-contain"
             />
           </div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
             Canadian Army Ranks
           </h3>
-          <div className="mb-6 text-gray-600">
-            <p className="mb-4">
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4 text-center">
               Test your knowledge of Canadian Army ranks and insignias.
             </p>
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex items-center gap-2 text-green-600">
-                <Trophy size={20} />
-                <span className="font-semibold">
-                  High Score: {armyStats.highScore}
-                  {armyStats.bestRun && ` (${armyStats.bestRun.accuracy}%)`}
-                </span>
-              </div>
-              {armyStats.bestRun && (
-                <div className="flex items-center gap-2 text-green-600">
-                  <Clock size={20} />
-                  <span className="font-semibold">
-                    Best Time: {Math.floor(armyStats.bestRun.time / 60000)}:
-                    {Math.floor((armyStats.bestRun.time % 60000) / 1000).toString().padStart(2, '0')}.
-                    {Math.floor((armyStats.bestRun.time % 1000) / 10).toString().padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-            </div>
+            <HighScoresList 
+              scores={armyStats.highScores.slice(0, 5)} 
+              accentColor="green"
+              onReset={() => onResetScores('army')}
+            />
           </div>
-          <button
-            onClick={() => onStart('army')}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
-          >
-            <Play size={20} />
-            Start Army Quiz
-          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={() => onStart('army')}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+            >
+              <Play size={20} />
+              Start Army Quiz
+            </button>
+          </div>
         </div>
 
         {/* Air Force Quiz Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+        <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="flex items-center justify-center mb-4">
             <img 
               src="/services/air-emblem.svg" 
@@ -115,40 +93,28 @@ export function StartScreen({ onStart, navyStats, armyStats, airStats }: StartSc
               className="w-32 h-32 object-contain"
             />
           </div>
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
+          <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
             Royal Canadian Air Force Ranks
           </h3>
-          <div className="mb-6 text-gray-600">
-            <p className="mb-4">
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4 text-center">
               Test your knowledge of Royal Canadian Air Force ranks and insignias.
             </p>
-            <div className="flex flex-col items-center gap-3">
-              <div className="flex items-center gap-2 text-sky-600">
-                <Trophy size={20} />
-                <span className="font-semibold">
-                  High Score: {airStats.highScore}
-                  {airStats.bestRun && ` (${airStats.bestRun.accuracy}%)`}
-                </span>
-              </div>
-              {airStats.bestRun && (
-                <div className="flex items-center gap-2 text-sky-600">
-                  <Clock size={20} />
-                  <span className="font-semibold">
-                    Best Time: {Math.floor(airStats.bestRun.time / 60000)}:
-                    {Math.floor((airStats.bestRun.time % 60000) / 1000).toString().padStart(2, '0')}.
-                    {Math.floor((airStats.bestRun.time % 1000) / 10).toString().padStart(2, '0')}
-                  </span>
-                </div>
-              )}
-            </div>
+            <HighScoresList 
+              scores={airStats.highScores.slice(0, 5)} 
+              accentColor="sky"
+              onReset={() => onResetScores('air')}
+            />
           </div>
-          <button
-            onClick={() => onStart('air')}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
-          >
-            <Play size={20} />
-            Start Air Force Quiz
-          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={() => onStart('air')}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
+            >
+              <Play size={20} />
+              Start Air Force Quiz
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -6,10 +6,11 @@ import { airForceRanks } from './data/airForceRanks';
 import { FlashCard } from './components/FlashCard';
 import { ScoreDisplay } from './components/ScoreDisplay';
 import { StartScreen } from './components/StartScreen';
+import { UserNameInput } from './components/UserNameInput';
 import { Anchor, Sword, Plane, Flag } from 'lucide-react';
-import { QuizType, RankData, BestRun, QuizStats } from './types';
+import { QuizType, RankData, BestRun, QuizStats, HighScoreEntry } from './types';
 
-type GameState = 'start' | 'playing' | 'finished';
+type GameState = 'start' | 'playing' | 'finished' | 'entering-name';
 
 function App() {
   const [gameState, setGameState] = useState<GameState>('start');
@@ -25,21 +26,30 @@ function App() {
     highScore: parseInt(localStorage.getItem('navyRanksHighScore') || '0'),
     bestRun: localStorage.getItem('navyRanksBestRun') 
       ? JSON.parse(localStorage.getItem('navyRanksBestRun')!) 
-      : null
+      : null,
+    highScores: localStorage.getItem('navyRanksHighScores')
+      ? JSON.parse(localStorage.getItem('navyRanksHighScores')!)
+      : []
   }));
 
   const [armyStats, setArmyStats] = useState<QuizStats>(() => ({
     highScore: parseInt(localStorage.getItem('armyRanksHighScore') || '0'),
     bestRun: localStorage.getItem('armyRanksBestRun')
       ? JSON.parse(localStorage.getItem('armyRanksBestRun')!)
-      : null
+      : null,
+    highScores: localStorage.getItem('armyRanksHighScores')
+      ? JSON.parse(localStorage.getItem('armyRanksHighScores')!)
+      : []
   }));
 
   const [airStats, setAirStats] = useState<QuizStats>(() => ({
     highScore: parseInt(localStorage.getItem('airRanksHighScore') || '0'),
     bestRun: localStorage.getItem('airRanksBestRun')
       ? JSON.parse(localStorage.getItem('airRanksBestRun')!)
-      : null
+      : null,
+    highScores: localStorage.getItem('airRanksHighScores')
+      ? JSON.parse(localStorage.getItem('airRanksHighScores')!)
+      : []
   }));
   
   // Timer states
@@ -69,6 +79,35 @@ function App() {
       case 'navy': setNavyStats(stats); break;
       case 'army': setArmyStats(stats); break;
       case 'air': setAirStats(stats); break;
+    }
+  };
+
+  const handleResetScores = (type: QuizType) => {
+    const emptyStats: QuizStats = {
+      highScore: 0,
+      bestRun: null,
+      highScores: []
+    };
+
+    const storagePrefix = type === 'navy' ? 'navy' : 
+                         type === 'army' ? 'army' : 'air';
+
+    // Clear localStorage
+    localStorage.removeItem(`${storagePrefix}RanksHighScore`);
+    localStorage.removeItem(`${storagePrefix}RanksBestRun`);
+    localStorage.removeItem(`${storagePrefix}RanksHighScores`);
+
+    // Update state
+    switch (type) {
+      case 'navy':
+        setNavyStats(emptyStats);
+        break;
+      case 'army':
+        setArmyStats(emptyStats);
+        break;
+      case 'air':
+        setAirStats(emptyStats);
+        break;
     }
   };
 
@@ -128,41 +167,62 @@ function App() {
 
   const handleNext = () => {
     if (currentRankIndex === shuffledRanks.length - 1) {
-      setGameState('finished');
-      // Calculate final accuracy
-      const accuracy = Math.round((correctAnswers / getCurrentRanks().length) * 100);
-      
-      const currentStats = getCurrentStats();
-      // Update best run if applicable
-      if (!currentStats.bestRun || 
-          correctAnswers > currentStats.bestRun.score || 
-          (correctAnswers === currentStats.bestRun.score && currentTime < currentStats.bestRun.time)) {
-        const newBestRun: BestRun = {
-          time: currentTime,
-          score: correctAnswers,
-          accuracy: accuracy
-        };
-        const newStats = {
-          ...currentStats,
-          bestRun: newBestRun,
-          highScore: Math.max(correctAnswers, currentStats.highScore)
-        };
-        updateCurrentStats(newStats);
-        
-        // Update localStorage
-        localStorage.setItem(
-          `${quizType}RanksBestRun`,
-          JSON.stringify(newBestRun)
-        );
-        localStorage.setItem(
-          `${quizType}RanksHighScore`,
-          correctAnswers.toString()
-        );
-      }
+      setGameState('entering-name');
     } else {
       setCurrentRankIndex((prev) => prev + 1);
       setIsTimerRunning(true);
     }
+  };
+
+  const handleUserNameSubmit = (userName: string) => {
+    const accuracy = Math.round((correctAnswers / getCurrentRanks().length) * 100);
+    
+    const newScore: HighScoreEntry = {
+      userName,
+      score: correctAnswers,
+      accuracy,
+      time: currentTime,
+      date: new Date().toISOString()
+    };
+
+    const currentStats = getCurrentStats();
+    const newHighScores = [...currentStats.highScores, newScore]
+      .sort((a, b) => {
+        if (a.score !== b.score) return b.score - a.score;
+        return a.time - b.time;
+      })
+      .slice(0, 100); // Keep top 100 scores
+
+    // Update best run if applicable
+    let newBestRun = currentStats.bestRun;
+    if (!currentStats.bestRun || 
+        correctAnswers > currentStats.bestRun.score || 
+        (correctAnswers === currentStats.bestRun.score && currentTime < currentStats.bestRun.time)) {
+      newBestRun = {
+        userName,
+        time: currentTime,
+        score: correctAnswers,
+        accuracy
+      };
+    }
+
+    const newStats = {
+      highScore: Math.max(correctAnswers, currentStats.highScore),
+      bestRun: newBestRun,
+      highScores: newHighScores
+    };
+
+    updateCurrentStats(newStats);
+    
+    // Update localStorage
+    const storagePrefix = quizType === 'navy' ? 'navy' : 
+                         quizType === 'army' ? 'army' : 'air';
+    
+    localStorage.setItem(`${storagePrefix}RanksHighScore`, correctAnswers.toString());
+    localStorage.setItem(`${storagePrefix}RanksBestRun`, JSON.stringify(newBestRun));
+    localStorage.setItem(`${storagePrefix}RanksHighScores`, JSON.stringify(newHighScores));
+
+    setGameState('finished');
   };
 
   const handleStartQuiz = (type: QuizType) => {
@@ -220,7 +280,28 @@ function App() {
           navyStats={navyStats}
           armyStats={armyStats}
           airStats={airStats}
+          onResetScores={handleResetScores}
         />
+      ) : gameState === 'entering-name' ? (
+        <div className="flex flex-col items-center gap-6">
+          <ScoreDisplay 
+            correct={correctAnswers} 
+            total={totalAnswers} 
+            highScore={getCurrentStats().highScore}
+            onRestart={handleRestart}
+            isFinished={true}
+            totalQuestions={getCurrentRanks().length}
+            currentTime={currentTime}
+            bestRun={getCurrentStats().bestRun}
+            quizType={quizType}
+          />
+          <UserNameInput 
+            onSubmit={handleUserNameSubmit} 
+            currentScore={correctAnswers}
+            currentTime={currentTime}
+            highScores={getCurrentStats().highScores}
+          />
+        </div>
       ) : (
         <div className="flex flex-col items-center gap-6">
           <ScoreDisplay 
