@@ -1,4 +1,4 @@
-import { Play, Trophy, Clock } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { QuizType, QuizStats } from '../types';
 import { HighScoresList } from './HighScoresList';
 

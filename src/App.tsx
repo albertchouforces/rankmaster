@@ -8,7 +8,7 @@ import { ScoreDisplay } from './components/ScoreDisplay';
 import { StartScreen } from './components/StartScreen';
 import { UserNameInput } from './components/UserNameInput';
 import { Anchor, Sword, Plane, Flag } from 'lucide-react';
-import { QuizType, RankData, BestRun, QuizStats, HighScoreEntry } from './types';
+import { QuizType, RankData, QuizStats, HighScoreEntry } from './types';
 
 type GameState = 'start' | 'playing' | 'finished' | 'entering-name';
 
