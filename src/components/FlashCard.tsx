@@ -14,7 +14,7 @@ interface FlashCardProps {
 
 export function FlashCard({ 
   rank, 
-  options, 
+  options: initialOptions, 
   onAnswer, 
   onNext,
   questionNumber,
@@ -24,8 +24,14 @@ export function FlashCard({
   const [showResult, setShowResult] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [options, setOptions] = useState(initialOptions);
 
-  // Reset state when rank changes (including when restarting)
+  // Set options only when rank changes
+  useEffect(() => {
+    setOptions(initialOptions);
+  }, [rank.id, initialOptions]);
+
+  // Reset state when rank changes
   useEffect(() => {
     setSelectedAnswer(null);
     setShowResult(false);
@@ -88,7 +94,7 @@ export function FlashCard({
           </div>
         </div>
 
-        {/* Options Section - Fixed width container */}
+        {/* Options Section */}
         <div className="w-full p-6 border-b border-gray-100">
           <div className="grid grid-cols-1 gap-3 w-full max-w-xl mx-auto">
             {options.map((option) => (
@@ -125,7 +131,6 @@ export function FlashCard({
         {/* Result Section */}
         {showResult && (
           <div className="w-full p-6 flex flex-col gap-6">
-            {/* Next button moved above fact section */}
             <div className="flex justify-center w-full">
               <button
                 onClick={handleNext}

@@ -42,7 +42,7 @@ export function ScoreDisplay({
           <span className={`text-${accentColor}-600`}>{percentage}%</span>
         </div>
         <div className="bg-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
-          <Trophy size={16} className="text-gray-600" />
+          <Trophy size={16} className={`text-${accentColor}-600`} />
           <span className="text-gray-600">Best: </span>
           <span className={`text-${accentColor}-600`}>
             {highScore}
@@ -52,7 +52,7 @@ export function ScoreDisplay({
         <Timer time={currentTime} accentColor={accentColor} />
         {bestRun && (
           <div className="bg-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
-            <Clock size={16} className="text-gray-600" />
+            <Clock size={16} className={`text-${accentColor}-600`} />
             <span className="text-gray-600">Best: </span>
             <span className={`text-${accentColor}-600 font-mono`}>
               {Math.floor(bestRun.time / 60000).toString().padStart(2, '0')}:

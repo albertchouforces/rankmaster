@@ -6,9 +6,10 @@ interface HighScoresListProps {
   scores: HighScoreEntry[];
   accentColor: string;
   onReset: () => void;
+  title?: string;
 }
 
-export function HighScoresList({ scores, accentColor, onReset }: HighScoresListProps) {
+export function HighScoresList({ scores, accentColor, onReset, title = "High Scores" }: HighScoresListProps) {
   const formatTime = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
@@ -34,7 +35,7 @@ export function HighScoresList({ scores, accentColor, onReset }: HighScoresListP
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
           <MedalIcon size={20} className={`text-${accentColor}-600`} />
-          Top Scores
+          {title}
         </h4>
         <button
           onClick={onReset}
@@ -42,7 +43,7 @@ export function HighScoresList({ scores, accentColor, onReset }: HighScoresListP
           title="Reset High Scores"
         >
           <Trash2 size={16} />
-          Reset Scores
+          Reset
         </button>
       </div>
       {scores.length > 0 ? (
