@@ -29,7 +29,8 @@ function App() {
   // Load initial stats from localStorage
   useEffect(() => {
     const initializeStats = () => {
-      ['navy', 'army', 'air'].forEach((type: QuizType) => {
+      const quizTypes: QuizType[] = ['navy', 'army', 'air'];
+      quizTypes.forEach((type) => {
         const statsKey = `${type}Stats`;
         const storedStats = localStorage.getItem(statsKey);
         if (!storedStats) {
