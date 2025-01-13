@@ -36,6 +36,9 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [randomizedRanks, setRandomizedRanks] = useState<RankData[]>([]);
+  const [isPaused, setIsPaused] = useState(false);
+  const [lastPauseTime, setLastPauseTime] = useState<number | null>(null);
+  const [accumulatedTime, setAccumulatedTime] = useState(0);
 
   // Load initial stats from localStorage
   useEffect(() => {
@@ -76,20 +79,21 @@ function App() {
     }
   };
 
-  // Timer effect
+  // Timer effect with pause functionality
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (gameState === 'playing' && startTime) {
+    if (gameState === 'playing' && startTime && !isPaused) {
       intervalId = setInterval(() => {
-        setCurrentTime(Date.now() - startTime);
+        const elapsed = Date.now() - startTime - accumulatedTime;
+        setCurrentTime(elapsed);
       }, 10);
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [gameState, startTime]);
+  }, [gameState, startTime, isPaused, accumulatedTime]);
 
   const getCurrentRanks = (): RankData[] => {
     switch (quizType) {
@@ -109,6 +113,22 @@ function App() {
       return JSON.parse(storedStats);
     }
     return INITIAL_QUIZ_STATS;
+  };
+
+  const pauseTimer = () => {
+    if (!isPaused) {
+      setIsPaused(true);
+      setLastPauseTime(Date.now());
+    }
+  };
+
+  const resumeTimer = () => {
+    if (isPaused && lastPauseTime) {
+      const pauseDuration = Date.now() - lastPauseTime;
+      setAccumulatedTime(prev => prev + pauseDuration);
+      setIsPaused(false);
+      setLastPauseTime(null);
+    }
   };
 
   const updateStats = (userName: string) => {
@@ -160,6 +180,9 @@ function App() {
     setTotalAnswers(0);
     setCurrentTime(0);
     setStartTime(Date.now());
+    setIsPaused(false);
+    setLastPauseTime(null);
+    setAccumulatedTime(0);
     // Randomize the ranks order when starting a new quiz
     setRandomizedRanks(shuffleArray(getCurrentRanks()));
   };
@@ -167,9 +190,11 @@ function App() {
   const handleAnswer = (correct: boolean) => {
     if (correct) setCorrectAnswers(prev => prev + 1);
     setTotalAnswers(prev => prev + 1);
+    pauseTimer();
   };
 
   const handleNext = () => {
+    resumeTimer();
     if (currentRankIndex < randomizedRanks.length - 1) {
       setCurrentRankIndex(prev => prev + 1);
     } else {
