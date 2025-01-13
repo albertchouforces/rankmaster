@@ -17,6 +17,16 @@ const INITIAL_QUIZ_STATS: QuizStats = {
   highScores: []
 };
 
+// Fisher-Yates shuffle algorithm
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 function App() {
   const [gameState, setGameState] = useState<GameState>('start');
   const [quizType, setQuizType] = useState<QuizType>('navy');
@@ -25,6 +35,7 @@ function App() {
   const [totalAnswers, setTotalAnswers] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [randomizedRanks, setRandomizedRanks] = useState<RankData[]>([]);
 
   // Load initial stats from localStorage
   useEffect(() => {
@@ -105,10 +116,8 @@ function App() {
     const currentStats = getCurrentStats(quizType);
     const accuracy = Math.round((correctAnswers / totalAnswers) * 100);
 
-    // Update high score if necessary
     const newHighScore = Math.max(currentStats.highScore, correctAnswers);
 
-    // Update best run if necessary
     const shouldUpdateBestRun = !currentStats.bestRun || 
       (correctAnswers >= currentStats.bestRun.score && currentTime < currentStats.bestRun.time);
 
@@ -119,7 +128,6 @@ function App() {
       accuracy
     } : currentStats.bestRun;
 
-    // Update high scores list
     const newScore: HighScoreEntry = {
       userName,
       score: correctAnswers,
@@ -152,6 +160,8 @@ function App() {
     setTotalAnswers(0);
     setCurrentTime(0);
     setStartTime(Date.now());
+    // Randomize the ranks order when starting a new quiz
+    setRandomizedRanks(shuffleArray(getCurrentRanks()));
   };
 
   const handleAnswer = (correct: boolean) => {
@@ -160,7 +170,7 @@ function App() {
   };
 
   const handleNext = () => {
-    if (currentRankIndex < getCurrentRanks().length - 1) {
+    if (currentRankIndex < randomizedRanks.length - 1) {
       setCurrentRankIndex(prev => prev + 1);
     } else {
       setGameState('entering-name');
@@ -177,25 +187,27 @@ function App() {
   };
 
   const getCurrentRank = () => {
-    const ranks = getCurrentRanks();
-    return ranks[currentRankIndex];
+    return randomizedRanks[currentRankIndex];
   };
 
+  // Generate random options for the current question
   const getRandomOptions = useMemo(() => {
-    const ranks = getCurrentRanks();
-    const correctRank = ranks[currentRankIndex].rank;
-    const otherRanks = ranks
-      .filter(r => r.rank !== correctRank)
-      .map(r => r.rank)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
+    const correctRank = randomizedRanks[currentRankIndex]?.rank;
+    if (!correctRank) return [];
     
-    return [...otherRanks, correctRank].sort(() => Math.random() - 0.5);
-  }, [currentRankIndex, quizType]);
+    const otherRanks = randomizedRanks
+      .filter(r => r.rank !== correctRank)
+      .map(r => r.rank);
+    
+    // Get 3 random incorrect answers
+    const randomIncorrect = shuffleArray(otherRanks).slice(0, 3);
+    
+    // Combine with correct answer and shuffle again
+    return shuffleArray([...randomIncorrect, correctRank]);
+  }, [currentRankIndex, randomizedRanks]);
 
   const handleResetScores = (type: QuizType) => {
     localStorage.setItem(`${type}Stats`, JSON.stringify(INITIAL_QUIZ_STATS));
-    // Force a re-render
     setGameState(prev => prev);
   };
 
@@ -214,7 +226,6 @@ function App() {
           />
         ) : (
           <>
-            {/* Quiz Title */}
             <div className="flex items-center gap-3">
               {quizTitle.icon}
               <h1 className={`text-2xl font-bold ${quizTitle.color}`}>
@@ -230,7 +241,7 @@ function App() {
                   highScore={getCurrentStats(quizType).highScore}
                   onRestart={handleRestart}
                   isFinished={false}
-                  totalQuestions={getCurrentRanks().length}
+                  totalQuestions={randomizedRanks.length}
                   currentTime={currentTime}
                   bestRun={getCurrentStats(quizType).bestRun}
                   quizType={quizType}
@@ -241,7 +252,7 @@ function App() {
                   onAnswer={handleAnswer}
                   onNext={handleNext}
                   questionNumber={currentRankIndex + 1}
-                  totalQuestions={getCurrentRanks().length}
+                  totalQuestions={randomizedRanks.length}
                 />
               </div>
             ) : (
@@ -252,7 +263,7 @@ function App() {
                   highScore={getCurrentStats(quizType).highScore}
                   onRestart={handleRestart}
                   isFinished={true}
-                  totalQuestions={getCurrentRanks().length}
+                  totalQuestions={randomizedRanks.length}
                   currentTime={currentTime}
                   bestRun={getCurrentStats(quizType).bestRun}
                   quizType={quizType}
