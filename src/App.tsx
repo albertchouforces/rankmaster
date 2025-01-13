@@ -3,6 +3,7 @@ import { FlashCard } from './components/FlashCard';
 import { ScoreDisplay } from './components/ScoreDisplay';
 import { StartScreen } from './components/StartScreen';
 import { UserNameInput } from './components/UserNameInput';
+import { Footer } from './components/Footer';
 import { navyRanks } from './data/navyRanks';
 import { armyRanks } from './data/armyRanks';
 import { airForceRanks } from './data/airForceRanks';
@@ -239,72 +240,75 @@ function App() {
   const quizTitle = getQuizTitle();
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="container mx-auto flex flex-col items-center gap-8">
-        {gameState === 'start' ? (
-          <StartScreen 
-            onStart={handleStart} 
-            navyStats={getCurrentStats('navy')}
-            armyStats={getCurrentStats('army')}
-            airStats={getCurrentStats('air')}
-            onResetScores={handleResetScores}
-          />
-        ) : (
-          <>
-            <div className="flex items-center gap-3">
-              {quizTitle.icon}
-              <h1 className={`text-2xl font-bold ${quizTitle.color}`}>
-                {quizTitle.text}
-              </h1>
-            </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <div className="flex-1 py-8 px-4">
+        <div className="container mx-auto flex flex-col items-center gap-8">
+          {gameState === 'start' ? (
+            <StartScreen 
+              onStart={handleStart} 
+              navyStats={getCurrentStats('navy')}
+              armyStats={getCurrentStats('army')}
+              airStats={getCurrentStats('air')}
+              onResetScores={handleResetScores}
+            />
+          ) : (
+            <>
+              <div className="flex items-center gap-3">
+                {quizTitle.icon}
+                <h1 className={`text-2xl font-bold ${quizTitle.color}`}>
+                  {quizTitle.text}
+                </h1>
+              </div>
 
-            {gameState === 'playing' ? (
-              <div className="flex flex-col items-center gap-6">
-                <ScoreDisplay 
-                  correct={correctAnswers} 
-                  total={totalAnswers} 
-                  highScore={getCurrentStats(quizType).highScore}
-                  onRestart={handleRestart}
-                  isFinished={false}
-                  totalQuestions={randomizedRanks.length}
-                  currentTime={currentTime}
-                  bestRun={getCurrentStats(quizType).bestRun}
-                  quizType={quizType}
-                />
-                <FlashCard
-                  rank={getCurrentRank()}
-                  options={getRandomOptions}
-                  onAnswer={handleAnswer}
-                  onNext={handleNext}
-                  questionNumber={currentRankIndex + 1}
-                  totalQuestions={randomizedRanks.length}
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-6">
-                <ScoreDisplay 
-                  correct={correctAnswers} 
-                  total={totalAnswers} 
-                  highScore={getCurrentStats(quizType).highScore}
-                  onRestart={handleRestart}
-                  isFinished={true}
-                  totalQuestions={randomizedRanks.length}
-                  currentTime={currentTime}
-                  bestRun={getCurrentStats(quizType).bestRun}
-                  quizType={quizType}
-                />
-                <UserNameInput 
-                  onSubmit={handleUserNameSubmit}
-                  currentScore={correctAnswers}
-                  currentTime={currentTime}
-                  highScores={getCurrentStats(quizType).highScores}
-                  quizType={quizType}
-                />
-              </div>
-            )}
-          </>
-        )}
+              {gameState === 'playing' ? (
+                <div className="flex flex-col items-center gap-6">
+                  <ScoreDisplay 
+                    correct={correctAnswers} 
+                    total={totalAnswers} 
+                    highScore={getCurrentStats(quizType).highScore}
+                    onRestart={handleRestart}
+                    isFinished={false}
+                    totalQuestions={randomizedRanks.length}
+                    currentTime={currentTime}
+                    bestRun={getCurrentStats(quizType).bestRun}
+                    quizType={quizType}
+                  />
+                  <FlashCard
+                    rank={getCurrentRank()}
+                    options={getRandomOptions}
+                    onAnswer={handleAnswer}
+                    onNext={handleNext}
+                    questionNumber={currentRankIndex + 1}
+                    totalQuestions={randomizedRanks.length}
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-6">
+                  <ScoreDisplay 
+                    correct={correctAnswers} 
+                    total={totalAnswers} 
+                    highScore={getCurrentStats(quizType).highScore}
+                    onRestart={handleRestart}
+                    isFinished={true}
+                    totalQuestions={randomizedRanks.length}
+                    currentTime={currentTime}
+                    bestRun={getCurrentStats(quizType).bestRun}
+                    quizType={quizType}
+                  />
+                  <UserNameInput 
+                    onSubmit={handleUserNameSubmit}
+                    currentScore={correctAnswers}
+                    currentTime={currentTime}
+                    highScores={getCurrentStats(quizType).highScores}
+                    quizType={quizType}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }
