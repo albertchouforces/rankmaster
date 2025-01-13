@@ -1,15 +1,24 @@
-import { Medal } from './Medal';
 import { Trash2, Medal as MedalIcon } from 'lucide-react';
-import { HighScoreEntry } from '../types';
+import { Medal } from './Medal';
+import { HighScoreEntry, QuizType } from '../types';
 
 interface HighScoresListProps {
   scores: HighScoreEntry[];
   accentColor: string;
   onReset: () => void;
   title?: string;
+  headerBackground?: boolean;
+  quizType: QuizType;
 }
 
-export function HighScoresList({ scores, accentColor, onReset, title = "High Scores" }: HighScoresListProps) {
+export function HighScoresList({ 
+  scores, 
+  accentColor, 
+  onReset, 
+  title = "High Scores",
+  headerBackground = true,
+  quizType
+}: HighScoresListProps) {
   const formatTime = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
@@ -30,6 +39,13 @@ export function HighScoresList({ scores, accentColor, onReset, title = "High Sco
     }
   };
 
+  const handleReset = () => {
+    // First call the provided onReset callback
+    onReset();
+    // Then refresh the page
+    window.location.reload();
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-3">
@@ -38,7 +54,7 @@ export function HighScoresList({ scores, accentColor, onReset, title = "High Sco
           {title}
         </h4>
         <button
-          onClick={onReset}
+          onClick={handleReset}
           className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium text-${accentColor}-600 hover:bg-${accentColor}-50 transition-colors`}
           title="Reset High Scores"
         >
@@ -50,7 +66,7 @@ export function HighScoresList({ scores, accentColor, onReset, title = "High Sco
         <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
           <table className="w-full min-w-[300px]">
             <thead>
-              <tr className={`bg-${accentColor}-50`}>
+              <tr className={headerBackground ? `bg-${accentColor}-50` : ''}>
                 <th className="px-3 py-2 text-left text-sm font-semibold text-gray-600 whitespace-nowrap"></th>
                 <th className="px-3 py-2 text-left text-sm font-semibold text-gray-600">Name</th>
                 <th className="px-3 py-2 text-left text-sm font-semibold text-gray-600 whitespace-nowrap">Score</th>
@@ -59,7 +75,7 @@ export function HighScoresList({ scores, accentColor, onReset, title = "High Sco
             </thead>
             <tbody>
               {scores.map((score, index) => (
-                <tr key={index} className="border-t border-gray-100">
+                <tr key={`${score.userName}-${index}`} className="border-t border-gray-100">
                   <td className="px-3 py-2 text-sm text-gray-600 whitespace-nowrap">
                     {getPositionDisplay(index)}
                   </td>

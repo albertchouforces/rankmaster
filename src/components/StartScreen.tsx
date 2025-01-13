@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Play, Trophy, Flag, Anchor, Sword, Plane } from 'lucide-react';
+import { Trophy, Flag, Play } from 'lucide-react';
 import { QuizType, QuizStats } from '../types';
 import { HighScoresList } from './HighScoresList';
 import { GlobalLeaderboard } from './GlobalLeaderboard';
@@ -10,7 +10,6 @@ interface StartScreenProps {
   armyStats: QuizStats;
   airStats: QuizStats;
   onResetScores: (type: QuizType) => void;
-  resetCounter: number; // Add reset counter prop
 }
 
 export function StartScreen({ 
@@ -18,10 +17,28 @@ export function StartScreen({
   navyStats, 
   armyStats, 
   airStats, 
-  onResetScores,
-  resetCounter // Add reset counter to props
+  onResetScores
 }: StartScreenProps) {
   const [showGlobalLeaderboard, setShowGlobalLeaderboard] = useState(false);
+  // Add reset counters to force re-render of score lists
+  const [navyResetCount, setNavyResetCount] = useState(0);
+  const [armyResetCount, setArmyResetCount] = useState(0);
+  const [airResetCount, setAirResetCount] = useState(0);
+
+  const handleReset = (type: QuizType) => {
+    onResetScores(type);
+    switch (type) {
+      case 'navy':
+        setNavyResetCount(prev => prev + 1);
+        break;
+      case 'army':
+        setArmyResetCount(prev => prev + 1);
+        break;
+      case 'air':
+        setAirResetCount(prev => prev + 1);
+        break;
+    }
+  };
 
   return (
     <div className="max-w-6xl w-full">
@@ -57,10 +74,13 @@ export function StartScreen({
               Test your knowledge of Royal Canadian Navy ranks and insignias.
             </p>
             <HighScoresList 
+              key={`navy-scores-${navyResetCount}`}
               scores={navyStats.highScores} 
               accentColor="blue"
-              onReset={() => onResetScores('navy')}
+              onReset={() => handleReset('navy')}
               title="Local Top Scores"
+              headerBackground={false}
+              quizType="navy"
             />
           </div>
           <div className="flex justify-center">
@@ -91,10 +111,13 @@ export function StartScreen({
               Test your knowledge of Canadian Army ranks and insignias.
             </p>
             <HighScoresList 
+              key={`army-scores-${armyResetCount}`}
               scores={armyStats.highScores}
               accentColor="green"
-              onReset={() => onResetScores('army')}
+              onReset={() => handleReset('army')}
               title="Local Top Scores"
+              headerBackground={true}
+              quizType="army"
             />
           </div>
           <div className="flex justify-center">
@@ -125,10 +148,13 @@ export function StartScreen({
               Test your knowledge of Royal Canadian Air Force ranks and insignias.
             </p>
             <HighScoresList 
+              key={`air-scores-${airResetCount}`}
               scores={airStats.highScores} 
               accentColor="sky"
-              onReset={() => onResetScores('air')}
+              onReset={() => handleReset('air')}
               title="Local Top Scores"
+              headerBackground={true}
+              quizType="air"
             />
           </div>
           <div className="flex justify-center">

@@ -11,6 +11,12 @@ import type { QuizType, QuizStats, RankData, HighScoreEntry } from './types';
 
 type GameState = 'start' | 'playing' | 'entering-name';
 
+const INITIAL_QUIZ_STATS: QuizStats = {
+  highScore: 0,
+  bestRun: null,
+  highScores: []
+};
+
 function App() {
   const [gameState, setGameState] = useState<GameState>('start');
   const [quizType, setQuizType] = useState<QuizType>('navy');
@@ -19,8 +25,21 @@ function App() {
   const [totalAnswers, setTotalAnswers] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
-  // Add a state to force re-renders when scores are reset
-  const [resetCounter, setResetCounter] = useState(0);
+
+  // Load initial stats from localStorage
+  useEffect(() => {
+    const initializeStats = () => {
+      ['navy', 'army', 'air'].forEach((type: QuizType) => {
+        const statsKey = `${type}Stats`;
+        const storedStats = localStorage.getItem(statsKey);
+        if (!storedStats) {
+          localStorage.setItem(statsKey, JSON.stringify(INITIAL_QUIZ_STATS));
+        }
+      });
+    };
+
+    initializeStats();
+  }, []);
 
   const getQuizTitle = () => {
     switch (quizType) {
@@ -47,7 +66,7 @@ function App() {
 
   // Timer effect
   useEffect(() => {
-    let intervalId: number;
+    let intervalId: NodeJS.Timeout;
 
     if (gameState === 'playing' && startTime) {
       intervalId = setInterval(() => {
@@ -77,11 +96,7 @@ function App() {
     if (storedStats) {
       return JSON.parse(storedStats);
     }
-    return {
-      highScore: 0,
-      bestRun: null,
-      highScores: []
-    };
+    return INITIAL_QUIZ_STATS;
   };
 
   const updateStats = (userName: string) => {
@@ -165,7 +180,6 @@ function App() {
     return ranks[currentRankIndex];
   };
 
-  // Memoize the random options to prevent re-renders from causing them to shuffle
   const getRandomOptions = useMemo(() => {
     const ranks = getCurrentRanks();
     const correctRank = ranks[currentRankIndex].rank;
@@ -179,16 +193,9 @@ function App() {
   }, [currentRankIndex, quizType]);
 
   const handleResetScores = (type: QuizType) => {
-    const statsKey = `${type}Stats`;
-    // Set empty stats object instead of just removing the item
-    const emptyStats = {
-      highScore: 0,
-      bestRun: null,
-      highScores: []
-    };
-    localStorage.setItem(statsKey, JSON.stringify(emptyStats));
-    // Increment reset counter to force re-render
-    setResetCounter(prev => prev + 1);
+    localStorage.setItem(`${type}Stats`, JSON.stringify(INITIAL_QUIZ_STATS));
+    // Force a re-render
+    setGameState(prev => prev);
   };
 
   const quizTitle = getQuizTitle();
@@ -203,7 +210,6 @@ function App() {
             armyStats={getCurrentStats('army')}
             airStats={getCurrentStats('air')}
             onResetScores={handleResetScores}
-            resetCounter={resetCounter} // Pass reset counter to force re-render
           />
         ) : (
           <>
