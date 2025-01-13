@@ -76,7 +76,6 @@ export function StartScreen({
             <HighScoresList 
               key={`navy-scores-${navyResetCount}`}
               scores={navyStats.highScores} 
-              accentColor="blue"
               onReset={() => handleReset('navy')}
               title="Local Top Scores"
               headerBackground={false}
@@ -113,7 +112,6 @@ export function StartScreen({
             <HighScoresList 
               key={`army-scores-${armyResetCount}`}
               scores={armyStats.highScores}
-              accentColor="green"
               onReset={() => handleReset('army')}
               title="Local Top Scores"
               headerBackground={true}
@@ -150,7 +148,6 @@ export function StartScreen({
             <HighScoresList 
               key={`air-scores-${airResetCount}`}
               scores={airStats.highScores} 
-              accentColor="sky"
               onReset={() => handleReset('air')}
               title="Local Top Scores"
               headerBackground={true}

@@ -4,7 +4,6 @@ import { HighScoreEntry, QuizType } from '../types';
 
 interface HighScoresListProps {
   scores: HighScoreEntry[];
-  accentColor: string;
   onReset: () => void;
   title?: string;
   headerBackground?: boolean;
@@ -13,12 +12,24 @@ interface HighScoresListProps {
 
 export function HighScoresList({ 
   scores, 
-  accentColor, 
   onReset, 
   title = "High Scores",
   headerBackground = true,
   quizType
 }: HighScoresListProps) {
+  const getAccentColor = (type: QuizType): string => {
+    switch (type) {
+      case 'navy':
+        return 'blue';
+      case 'army':
+        return 'green';
+      case 'air':
+        return 'sky';
+    }
+  };
+
+  const accentColor = getAccentColor(quizType);
+
   const formatTime = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
