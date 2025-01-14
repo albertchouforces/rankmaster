@@ -12,7 +12,7 @@ export const armyRanks: ArmyRank[] = [
     id: 1,
     rank: "Private (Basic)",
     description: "Private who has completed basic training",
-    fact: "The single chevron represents the first step in an Army career after completing basic military qualification.",
+    fact: "The first step in an Army career after completing basic military qualification.",
     imageUrl: "/ranks/army/pte-b.png"
   },
   {
