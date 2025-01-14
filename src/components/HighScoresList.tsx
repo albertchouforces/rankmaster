@@ -25,6 +25,8 @@ export function HighScoresList({
         return 'green';
       case 'air':
         return 'sky';
+      case 'combined':
+        return 'red';
     }
   };
 

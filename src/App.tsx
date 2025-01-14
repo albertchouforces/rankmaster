@@ -7,7 +7,8 @@ import { Footer } from './components/Footer';
 import { navyRanks } from './data/navyRanks';
 import { armyRanks } from './data/armyRanks';
 import { airForceRanks } from './data/airForceRanks';
-import { Anchor, Sword, Plane } from 'lucide-react';
+import { getAllRanks } from './data/combinedRanks.ts';
+import { Anchor, Sword, Plane, Flag } from 'lucide-react';
 import type { QuizType, QuizStats, RankData, HighScoreEntry } from './types';
 
 type GameState = 'start' | 'playing' | 'entering-name';
@@ -28,6 +29,22 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
+// Get non-duplicate random ranks for options
+const getRandomOptions = (ranks: RankData[], correctRank: string, count: number): string[] => {
+  // Get all unique rank names except the correct one
+  const uniqueRanks = Array.from(new Set(
+    ranks
+      .filter(r => r.rank !== correctRank)
+      .map(r => r.rank)
+  ));
+
+  // Shuffle and take required number of incorrect options
+  const randomIncorrect = shuffleArray(uniqueRanks).slice(0, count - 1);
+  
+  // Combine with correct answer and shuffle again
+  return shuffleArray([...randomIncorrect, correctRank]);
+};
+
 function App() {
   const [gameState, setGameState] = useState<GameState>('start');
   const [quizType, setQuizType] = useState<QuizType>('navy');
@@ -44,7 +61,7 @@ function App() {
   // Load initial stats from localStorage
   useEffect(() => {
     const initializeStats = () => {
-      const quizTypes: QuizType[] = ['navy', 'army', 'air'];
+      const quizTypes: QuizType[] = ['navy', 'army', 'air', 'combined'];
       quizTypes.forEach((type) => {
         const statsKey = `${type}Stats`;
         const storedStats = localStorage.getItem(statsKey);
@@ -76,6 +93,12 @@ function App() {
           text: "Royal Canadian Air Force Ranks",
           icon: <Plane className="text-sky-600" size={32} />,
           color: "text-sky-600"
+        };
+      case 'combined':
+        return {
+          text: "Canadian Armed Forces Ranks",
+          icon: <Flag className="text-red-600" size={32} />,
+          color: "text-red-600"
         };
     }
   };
@@ -175,9 +198,14 @@ function App() {
     setAccumulatedTime(0);
     
     // Get the correct ranks for the selected quiz type
-    const ranks = type === 'navy' ? navyRanks :
-                 type === 'army' ? armyRanks :
-                 airForceRanks;
+    let ranks;
+    if (type === 'combined') {
+      ranks = getAllRanks();
+    } else {
+      ranks = type === 'navy' ? navyRanks :
+              type === 'army' ? armyRanks :
+              airForceRanks;
+    }
     
     // Randomize the ranks order when starting a new quiz
     setRandomizedRanks(shuffleArray(ranks));
@@ -212,21 +240,14 @@ function App() {
   };
 
   // Generate random options for the current question
-  const getRandomOptions = useMemo(() => {
+  const options = useMemo(() => {
     if (!randomizedRanks.length) return [];
     
-    const correctRank = randomizedRanks[currentRankIndex]?.rank;
-    if (!correctRank) return [];
+    const currentRank = getCurrentRank();
+    if (!currentRank) return [];
     
-    const otherRanks = randomizedRanks
-      .filter(r => r.rank !== correctRank)
-      .map(r => r.rank);
-    
-    // Get 3 random incorrect answers
-    const randomIncorrect = shuffleArray(otherRanks).slice(0, 3);
-    
-    // Combine with correct answer and shuffle again
-    return shuffleArray([...randomIncorrect, correctRank]);
+    // Use the getRandomOptions helper function to ensure unique options
+    return getRandomOptions(randomizedRanks, currentRank.rank, 4);
   }, [currentRankIndex, randomizedRanks]);
 
   const handleResetScores = (type: QuizType) => {
@@ -246,6 +267,7 @@ function App() {
               navyStats={getCurrentStats('navy')}
               armyStats={getCurrentStats('army')}
               airStats={getCurrentStats('air')}
+              combinedStats={getCurrentStats('combined')}
               onResetScores={handleResetScores}
             />
           ) : (
@@ -272,7 +294,7 @@ function App() {
                   />
                   <FlashCard
                     rank={getCurrentRank()}
-                    options={getRandomOptions}
+                    options={options}
                     onAnswer={handleAnswer}
                     onNext={handleNext}
                     questionNumber={currentRankIndex + 1}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { HighScoreEntry } from '../types';
-import { Trophy, Loader2, Medal as MedalIcon } from 'lucide-react';
+import { HighScoreEntry, QuizType } from '../types';
 import { saveGlobalScore, getGlobalScores } from '../lib/supabase';
+import { Trophy, Loader2, Medal as MedalIcon } from 'lucide-react';
 import { Medal } from './Medal';
 
 interface UserNameInputProps {
@@ -9,7 +9,7 @@ interface UserNameInputProps {
   currentScore: number;
   currentTime: number;
   highScores: HighScoreEntry[];
-  quizType: 'navy' | 'army' | 'air';
+  quizType: QuizType;
 }
 
 export function UserNameInput({ onSubmit, currentScore, currentTime, highScores, quizType }: UserNameInputProps) {
@@ -67,7 +67,6 @@ export function UserNameInput({ onSubmit, currentScore, currentTime, highScores,
   };
 
   const getLocalPositionDisplay = (position: number) => {
-    // Only return Medal component for top 3 positions
     if (position <= 3) {
       return (
         <Medal 
@@ -76,12 +75,6 @@ export function UserNameInput({ onSubmit, currentScore, currentTime, highScores,
         />
       );
     }
-    // For 4th and 5th, return a simple text number without a medal
-    /*return (
-      <div className="w-7 h-7 flex items-center justify-center text-gray-600">
-        {position}
-      </div>
-    );*/
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,7 +85,10 @@ export function UserNameInput({ onSubmit, currentScore, currentTime, highScores,
     setError(null);
 
     try {
-      const accuracy = Math.round((currentScore / 19) * 100); // 19 is total ranks per service
+      // Calculate total questions based on quiz type
+      const totalQuestions = quizType === 'combined' ? 57 : 19; // 19 ranks per service, 3 services for combined
+      const accuracy = Math.round((currentScore / totalQuestions) * 100);
+      
       const success = await saveGlobalScore({
         user_name: userName.trim(),
         score: currentScore,
@@ -120,6 +116,7 @@ export function UserNameInput({ onSubmit, currentScore, currentTime, highScores,
       case 'navy': return 'blue';
       case 'army': return 'green';
       case 'air': return 'sky';
+      case 'combined': return 'red';
     }
   };
 

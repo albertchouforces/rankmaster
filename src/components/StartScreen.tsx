@@ -9,6 +9,7 @@ interface StartScreenProps {
   navyStats: QuizStats;
   armyStats: QuizStats;
   airStats: QuizStats;
+  combinedStats: QuizStats;
   onResetScores: (type: QuizType) => void;
 }
 
@@ -16,14 +17,15 @@ export function StartScreen({
   onStart, 
   navyStats, 
   armyStats, 
-  airStats, 
+  airStats,
+  combinedStats,
   onResetScores
 }: StartScreenProps) {
   const [showGlobalLeaderboard, setShowGlobalLeaderboard] = useState(false);
-  // Add reset counters to force re-render of score lists
   const [navyResetCount, setNavyResetCount] = useState(0);
   const [armyResetCount, setArmyResetCount] = useState(0);
   const [airResetCount, setAirResetCount] = useState(0);
+  const [combinedResetCount, setCombinedResetCount] = useState(0);
 
   const handleReset = (type: QuizType) => {
     onResetScores(type);
@@ -37,11 +39,14 @@ export function StartScreen({
       case 'air':
         setAirResetCount(prev => prev + 1);
         break;
+      case 'combined':
+        setCombinedResetCount(prev => prev + 1);
+        break;
     }
   };
 
   return (
-    <div className="max-w-6xl w-full">
+    <div className="max-w-7xl w-full">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-3">
           <Flag className="text-red-600" size={32} />
@@ -56,20 +61,21 @@ export function StartScreen({
         Choose Your Service Branch
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* Navy Quiz Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+      {/* Service-specific Quiz Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        {/* Navy Card */}
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col h-full">
           <div className="flex items-center justify-center mb-4">
             <img 
               src="/services/navy-emblem.svg" 
               alt="Royal Canadian Navy Emblem"
-              className="w-32 h-32 object-contain"
+              className="w-24 h-24 object-contain"
             />
           </div>
-          <h3 className="text-xl font-bold text-blue-600 mb-4 text-center flex items-center justify-center gap-2">
+          <h3 className="text-xl font-bold text-blue-600 mb-4 text-center">
             Royal Canadian Navy Ranks
           </h3>
-          <div className="mb-6">
+          <div className="mb-6 flex-grow">
             <p className="text-gray-600 mb-4 text-center">
               Test your knowledge of Royal Canadian Navy ranks and insignias.
             </p>
@@ -82,10 +88,10 @@ export function StartScreen({
               quizType="navy"
             />
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-auto">
             <button
               onClick={() => onStart('navy')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
             >
               <Play size={20} />
               Start Navy Quiz
@@ -93,19 +99,19 @@ export function StartScreen({
           </div>
         </div>
 
-        {/* Army Quiz Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        {/* Army Card */}
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col h-full">
           <div className="flex items-center justify-center mb-4">
             <img 
               src="/services/army-emblem.svg" 
               alt="Canadian Army Emblem"
-              className="w-32 h-32 object-contain"
+              className="w-24 h-24 object-contain"
             />
           </div>
-          <h3 className="text-xl font-bold text-green-600 mb-4 text-center flex items-center justify-center gap-2">
+          <h3 className="text-xl font-bold text-green-600 mb-4 text-center">
             Canadian Army Ranks
           </h3>
-          <div className="mb-6">
+          <div className="mb-6 flex-grow">
             <p className="text-gray-600 mb-4 text-center">
               Test your knowledge of Canadian Army ranks and insignias.
             </p>
@@ -118,10 +124,10 @@ export function StartScreen({
               quizType="army"
             />
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-auto">
             <button
               onClick={() => onStart('army')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
             >
               <Play size={20} />
               Start Army Quiz
@@ -129,19 +135,19 @@ export function StartScreen({
           </div>
         </div>
 
-        {/* Air Force Quiz Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        {/* Air Force Card */}
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col h-full">
           <div className="flex items-center justify-center mb-4">
             <img 
               src="/services/air-emblem.svg" 
               alt="Royal Canadian Air Force Emblem"
-              className="w-32 h-32 object-contain"
+              className="w-24 h-24 object-contain"
             />
           </div>
-          <h3 className="text-xl font-bold text-sky-600 mb-4 text-center flex items-center justify-center gap-2">
+          <h3 className="text-xl font-bold text-sky-600 mb-4 text-center">
             Royal Canadian Air Force Ranks
           </h3>
-          <div className="mb-6">
+          <div className="mb-6 flex-grow">
             <p className="text-gray-600 mb-4 text-center">
               Test your knowledge of Royal Canadian Air Force ranks and insignias.
             </p>
@@ -154,10 +160,10 @@ export function StartScreen({
               quizType="air"
             />
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-auto">
             <button
               onClick={() => onStart('air')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
             >
               <Play size={20} />
               Start Air Force Quiz
@@ -166,8 +172,8 @@ export function StartScreen({
         </div>
       </div>
 
-      {/* Global Leaderboard Button */}
-      <div className="flex justify-center">
+      {/* Global Leaderboard Button - Now with more vertical spacing */}
+      <div className="flex justify-center my-12">
         <button
           onClick={() => setShowGlobalLeaderboard(true)}
           className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-semibold"
@@ -175,6 +181,56 @@ export function StartScreen({
           <Trophy size={20} />
           View Global Leaderboard
         </button>
+      </div>
+
+      {/* Divider with text */}
+      <div className="relative mb-12">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-gray-100 px-4 text-lg font-semibold text-gray-600">
+            Advanced Challenge
+          </span>
+        </div>
+      </div>
+
+      {/* Combined Forces Card - Centered */}
+      <div className="max-w-md mx-auto">
+        <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col h-full">
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src="/services/caf-emblem.svg" 
+              alt="Canadian Armed Forces Emblem"
+              className="w-24 h-24 object-contain"
+            />
+          </div>
+          <h3 className="text-xl font-bold text-red-600 mb-4 text-center">
+            Combined Canadian Armed Forces Ranks
+          </h3>
+          <div className="mb-6">
+            <p className="text-gray-600 mb-4 text-center">
+              Ready for the ultimate challenge? Test your knowledge of all three service branches combined.
+            </p>
+            <HighScoresList 
+              key={`combined-scores-${combinedResetCount}`}
+              scores={combinedStats.highScores} 
+              onReset={() => handleReset('combined')}
+              title="Local Top Scores"
+              headerBackground={true}
+              quizType="combined"
+            />
+          </div>
+          <div className="flex justify-center mt-auto">
+            <button
+              onClick={() => onStart('combined')}
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+            >
+              <Play size={20} />
+              Start Combined Quiz
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Global Leaderboard Modal */}

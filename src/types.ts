@@ -1,4 +1,4 @@
-export type QuizType = 'navy' | 'army' | 'air';
+export type QuizType = 'navy' | 'army' | 'air' | 'combined';
 
 export interface RankData {
   id: number;

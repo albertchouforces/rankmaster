@@ -24,11 +24,24 @@ export function FlashCard({
   const [showResult, setShowResult] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [options, setOptions] = useState(initialOptions);
+  const [options, setOptions] = useState<string[]>([]);
 
-  // Set options only when rank changes
+  // Set options only when rank changes, ensuring uniqueness
   useEffect(() => {
-    setOptions(initialOptions);
+    // Create a Set to remove duplicates while maintaining order
+    const uniqueOptions = Array.from(new Set(initialOptions));
+    
+    // If we removed duplicates and need more options, we need to handle that
+    if (uniqueOptions.length < 4) {
+      // This is a safeguard that should never happen in practice
+      // but we'll handle it just in case
+      console.warn('Duplicate options detected, filling with placeholders');
+      const placeholders = ['Option A', 'Option B', 'Option C', 'Option D']
+        .slice(0, 4 - uniqueOptions.length);
+      setOptions([...uniqueOptions, ...placeholders]);
+    } else {
+      setOptions(uniqueOptions);
+    }
   }, [rank.id, initialOptions]);
 
   // Reset state when rank changes

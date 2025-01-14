@@ -28,6 +28,7 @@ export function ScoreDisplay({
   const percentage = total === 0 ? 0 : Math.round((correct / total) * 100);
   const accentColor = quizType === 'navy' ? 'blue' : 
                      quizType === 'army' ? 'green' : 
+                     quizType === 'combined' ? 'red' :
                      'sky';
 
   return (

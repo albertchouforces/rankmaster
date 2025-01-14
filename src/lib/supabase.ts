@@ -1,21 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
+import { QuizType } from '../types';
 
 // TODO: Replace these with your Supabase project credentials
 // You can find these in your Supabase project settings -> API
 const supabaseUrl = 'https://lgtijobontcybeqobomh.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxndGlqb2JvbnRjeWJlcW9ib21oIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjQ1MDk4MiwiZXhwIjoyMDUyMDI2OTgyfQ.TIlDrifOlgutH-kt7Zsu5ab-0iCqS_E6LPZixxbTNLw';
-
-/*
-Database setup required:
-Create a table named 'global_scores' with the following columns:
-- id: uuid (primary key)
-- user_name: text
-- score: integer
-- accuracy: integer
-- time: integer (milliseconds)
-- service: text (enum: 'navy', 'army', 'air')
-- date: timestamp with timezone
-*/
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -24,7 +13,7 @@ interface GlobalScoreEntry {
   score: number;
   accuracy: number;
   time: number;
-  service: 'navy' | 'army' | 'air';
+  service: QuizType;
   date: string;
 }
 
@@ -45,7 +34,7 @@ export async function saveGlobalScore(scoreData: GlobalScoreEntry): Promise<bool
   }
 }
 
-export async function getGlobalScores(service: 'navy' | 'army' | 'air'): Promise<GlobalScoreEntry[]> {
+export async function getGlobalScores(service: QuizType): Promise<GlobalScoreEntry[]> {
   try {
     const { data, error } = await supabase
       .from('global_scores')

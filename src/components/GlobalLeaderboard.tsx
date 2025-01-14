@@ -43,6 +43,7 @@ export function GlobalLeaderboard({ onClose }: GlobalLeaderboardProps) {
       case 'navy': return 'blue';
       case 'army': return 'green';
       case 'air': return 'sky';
+      case 'combined': return 'red';
     }
   };
 
@@ -73,8 +74,8 @@ export function GlobalLeaderboard({ onClose }: GlobalLeaderboardProps) {
             </button>
           </div>
 
-          <div className="flex gap-2">
-            {(['navy', 'army', 'air'] as const).map((service) => (
+          <div className="flex gap-2 flex-wrap">
+            {(['navy', 'army', 'air', 'combined'] as const).map((service) => (
               <button
                 key={service}
                 onClick={() => setSelectedService(service)}
@@ -86,7 +87,8 @@ export function GlobalLeaderboard({ onClose }: GlobalLeaderboardProps) {
               >
                 {service === 'navy' ? 'Royal Canadian Navy' :
                  service === 'army' ? 'Canadian Army' :
-                 'Royal Canadian Air Force'}
+                 service === 'air' ? 'Royal Canadian Air Force' :
+                 'Combined CAF'}
               </button>
             ))}
           </div>
