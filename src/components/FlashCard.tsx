@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { NavyRank } from '../data/navyRanks';
+import type { RankData } from '../types';
 import { Check, X, ImageOff, BookOpen } from 'lucide-react';
 import { RankImagePlaceholder } from './RankImagePlaceholder';
 
 interface FlashCardProps {
-  rank: NavyRank;
+  rank: RankData;
   options: string[];
   onAnswer: (correct: boolean) => void;
   onNext: () => void;

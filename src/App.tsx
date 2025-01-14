@@ -184,8 +184,14 @@ function App() {
     setIsPaused(false);
     setLastPauseTime(null);
     setAccumulatedTime(0);
+    
+    // Get the correct ranks for the selected quiz type
+    const ranks = type === 'navy' ? navyRanks :
+                 type === 'army' ? armyRanks :
+                 airForceRanks;
+    
     // Randomize the ranks order when starting a new quiz
-    setRandomizedRanks(shuffleArray(getCurrentRanks()));
+    setRandomizedRanks(shuffleArray(ranks));
   };
 
   const handleAnswer = (correct: boolean) => {
@@ -218,6 +224,8 @@ function App() {
 
   // Generate random options for the current question
   const getRandomOptions = useMemo(() => {
+    if (!randomizedRanks.length) return [];
+    
     const correctRank = randomizedRanks[currentRankIndex]?.rank;
     if (!correctRank) return [];
     
