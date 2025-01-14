@@ -96,17 +96,6 @@ function App() {
     };
   }, [gameState, startTime, isPaused, accumulatedTime]);
 
-  const getCurrentRanks = (): RankData[] => {
-    switch (quizType) {
-      case 'navy':
-        return navyRanks;
-      case 'army':
-        return armyRanks;
-      case 'air':
-        return airForceRanks;
-    }
-  };
-
   const getCurrentStats = (type: QuizType): QuizStats => {
     const statsKey = `${type}Stats`;
     const storedStats = localStorage.getItem(statsKey);
