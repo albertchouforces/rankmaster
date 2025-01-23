@@ -69,7 +69,7 @@ export function HighScoresList({
         <button
           onClick={handleReset}
           className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium text-${accentColor}-600 hover:bg-${accentColor}-50 transition-colors`}
-          title="Reset High Scores"
+          title="Reset Top Scores"
         >
           <Trash2 size={16} />
           Reset
